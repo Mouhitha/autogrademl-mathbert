@@ -1,63 +1,41 @@
-# MachineLearning
-autograding of algebraic using mathbert embedidngs and analysing through ML models
-Autograding offers significant advantages for teachers and
-students alike. Marking work by hand is subject to time
-constraints and also to errors which hinders the fairness of
-evaluation. It ensures fairness by providing consistent and
-unbiased evaluation across all student submissions, addressing
-a common issue where some teachers award full marks only
-for correct final answers, overlooking partial correctness and
-the problem-solving process. Autograding models can assign
-marks for partially correct solutions, thereby recognizing
-students understanding and effort even when the final answer
-is incorrect. This approach not only enhances the fairness of
-grading but also reduces the workload on teachers, freeing
-up valuable time that can be used towards personalized
-instruction and other educational activities. Consequently, the
-integration of autograding systems in educational settings
-fosters a more equitable and efficient learning environment.
+# AutoGradeML: Evaluating Algebra Answers with MathBERT Embeddings
 
+How do algebraic syntax and LaTeX compare when identifying which of six questions a response addresses? Separately, how well does each representation predict the recorded partial-credit mark?
 
-Autograding is beneficial for algebraic questions due to the
-structured and logical nature of algebra. Algebraic problems
-often have well-defined steps and intermediate solutions that
-can be systematically evaluated. Traditional manual grading
-can be subjective, especially when it comes in giving partial
-marks for intermediate steps. This not only ensures fairer
-grading but also helps students understand their mistakes
-and learn more effectively. Additionally, algebra forms the
-foundation for many advanced topics in mathematics and
-science, making accurate and consistent grading crucial for
-building a solid understanding of these subjects.
+The repository contains already-computed, 384-dimensional MathBERT embeddings for six questions. Each row has a question ID and a recorded `Marks` label of 0, 1, or 2. Each representation has three workbooks with different roles in this evaluation:
 
+- **Reference key** (6 rows). One example per question, each marked 2. All six vectors also appear in the corresponding main workbook.
+- **Main solutions** (126 rows). The source of training data for marks prediction and of the most frequent labels for both baselines.
+- **Additional solutions** (26 nonempty rows). These supply the evaluation data. Two rows per representation exactly match main vectors.
 
-The project employing machine learning techniques
-aims to develop a dependable system for autograding
-algebraic questions. The model has been explored with
-different types of algebraic questions using MathBERT.
-Our methodology encompasses several essential stages:
-pre-processing, embedding and feature extraction, clustering
-and dimensionality reduction, similarity computation, and
-validation using performance metrics. The process of data
-preparation consisted of assembling training datasets in
-mathematical format and in LaTeX format and providing with
-correctness labels for each answer. MathBERT embeddings
-converted these text-based answers into high-dimensional
-numerical arrays, which allowed to include semantic details
-of the mathematical hints. t-SNE was as a tool for
-dimensionality reduction, thereby getting retained the locally
-structured data, and K-means cluster was utilized for forming
-the data based on questions and correctness label. The cosine
-similarity analysis function was used to make comparisons
-between student answers and key solutions by dividing them
-into correct, partially correct and incorrect sets based on
-specific levels of similarity.
+## Results
 
+Each task scored 24 additional examples per representation after excluding two known exact overlaps. How those examples were collected and whether they came from distinct students or answers are unknown. Exact vector matching catches identical vectors and can miss differently encoded copies of the same answer. [Evaluation protocol](docs/EVALUATION_PROTOCOL.md)
 
+### Question identification
 
-The research primarily answers the following questions:
-RQ1: Can cluster based classification helps in grading the
-mathematical responses more accurately when compared
-to the rule based approach?
-RQ2: How well does MathBERT trained on Latex codes
-understand the semantics of mathematical expressions?
+Nearest-reference cosine matched the recorded question ID on **21 of 24 LaTeX examples (87.5%)** and **22 of 24 algebraic examples (91.7%)**. Each prediction picks one of six reference question IDs. [LaTeX JSON](results/latex.json) · [Algebraic JSON](results/algebraic.json)
+
+### Marks prediction
+
+Logistic regression matched the recorded mark on **11 of 24 examples (45.8%)** for each representation. The majority-class baseline matched **8 of 24 (33.3%)** for each. The model uses the embeddings alone. Agreement on fewer than half of these 24 examples is insufficient evidence for reliable automatic grading or readiness for real student assessment. [LaTeX JSON](results/latex.json) · [Algebraic JSON](results/algebraic.json)
+
+## Run the evaluation
+
+From the repository root, with Python 3.12:
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python scripts/evaluate_embeddings.py --representation latex
+python scripts/evaluate_embeddings.py --representation algebraic
+```
+
+The script prints counts, scores, and confusion matrices and writes JSON reports and CSV summaries to `results/`. Use `--data-dir` or `--output-dir` to change those locations. To run the tests in the same environment, install `requirements-dev.txt` and run `python -m pytest -q`. [LaTeX results](results/latex.json) · [Algebraic results](results/algebraic.json)
+
+## Limits of the archive
+
+The script reproduces the evaluation on the supplied embeddings for six questions. The original answers, partial-credit rubric, and exact MathBERT settings are unavailable in this archive. Recreating the embeddings or verifying the marks would require those inputs and settings. The evaluation includes no fairness audit. [Data dictionary](docs/DATA_DICTIONARY.md)
+
+The original `projectfinal.ipynb` notebook archives clustering, t-SNE, similarity experiments, and manually assembled summaries. The historical headline percentages lack an independently verified task, split, and denominator. The results above come from the evaluation script. [Original notebook](projectfinal.ipynb) · [Notebook notes](docs/ORIGINAL_NOTEBOOK_NOTES.md)
