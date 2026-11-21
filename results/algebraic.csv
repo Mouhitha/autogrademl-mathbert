@@ -1,0 +1,5 @@
+task,key_rows,main_rows,additional_rows,evaluation_rows,exact_duplicates_dropped,method,accuracy,macro_f1,labels,support,confusion_matrix
+question_identification,6,126,26,24,2,nearest-reference cosine,0.9166666666666666,0.8816738816738816,"[1, 2, 3, 4, 5, 6]","[2, 5, 3, 4, 5, 5]","[[1, 0, 0, 0, 1, 0], [0, 5, 0, 0, 0, 0], [0, 0, 3, 0, 0, 0], [0, 0, 1, 3, 0, 0], [0, 0, 0, 0, 5, 0], [0, 0, 0, 0, 0, 5]]"
+question_identification,6,126,26,24,2,majority class,0.08333333333333333,0.025641025641025644,"[1, 2, 3, 4, 5, 6]","[2, 5, 3, 4, 5, 5]","[[2, 0, 0, 0, 0, 0], [5, 0, 0, 0, 0, 0], [3, 0, 0, 0, 0, 0], [4, 0, 0, 0, 0, 0], [5, 0, 0, 0, 0, 0], [5, 0, 0, 0, 0, 0]]"
+marks_prediction,6,126,26,24,2,multinomial logistic regression,0.4583333333333333,0.43809041835357626,"[0, 1, 2]","[8, 8, 8]","[[2, 3, 3], [3, 3, 2], [0, 2, 6]]"
+marks_prediction,6,126,26,24,2,majority class,0.3333333333333333,0.16666666666666666,"[0, 1, 2]","[8, 8, 8]","[[0, 0, 8], [0, 0, 8], [0, 0, 8]]"
